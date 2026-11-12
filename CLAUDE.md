@@ -44,6 +44,11 @@ from a deterministic HTML animation. Each video is a theme:
   each: sandboxed tools, keys kept with their team, behind Nexus, human
   approvals in code the model cannot bypass, the Event History as a
   searchable audit trail
+- `workflow-streams`: Workflow Streams, a short explainer for developers
+  in one chapter: a Workflow Stream is an event log inside a Workflow;
+  publishers add events to named topics, each event gets a global offset,
+  and a subscriber long-polls from an offset and resumes after a
+  disconnect with nothing missed; no broker, no extra infrastructure
 
 No theme is the default: make targets cover every theme unless `THEME=<theme>`
 narrows them, and the per-theme scripts require `--theme`. A home page

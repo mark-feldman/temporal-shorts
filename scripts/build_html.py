@@ -67,6 +67,7 @@ THEME_TOPICS = {
     "security": ["Security", "Temporal Proxy", "Temporal Nexus"],
     "temporal-proxy": ["Temporal Proxy", "Encryption", "Security"],
     "ai-agent-security": ["AI agent", "AI security", "Human-in-the-loop"],
+    "workflow-streams": ["Workflow Streams", "Workflow", "Event streaming"],
 }
 
 MIME_TYPES = {

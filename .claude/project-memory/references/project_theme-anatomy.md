@@ -655,6 +655,28 @@ below and the card order in [Home page design](feedback_home-page.md).
   zoom-through (`setCamera`) at every chapter boundary, and a match cut
   from the intro into ch1 (the orb flies to its place on the board).
 
+### workflow-streams
+
+- Developers, card title "Workflow Streams", audience "Developers",
+  markdown-title "Workflow Streams with Temporal". Kicker "AN EXPLAINER
+  FOR DEVELOPERS", title "What is a Workflow Stream?", tagline "WORKFLOW
+  STREAMS WITH TEMPORAL"; end card tagline "LIVE PROGRESS FROM YOUR
+  WORKFLOWS" with the pill "Public Preview".
+- One animation for a forum slide: intro, one topic chapter, outro. No
+  recap and no "What you can build" chapter (user decision). The chapter's
+  last subtitle carries a long `after`, so its final frame holds for a
+  presenter to talk over.
+- The feature is named "Workflow Streams", as in the Temporal docs, never
+  "native streaming" (Product's messaging guide); the video states its
+  Public Preview status. Every claim follows docs.temporal.io/workflow-streams
+  and the SDK guides (`### Sources` in `script.md`): offsets are global
+  across topics; Workflow code appends in memory; Activities send batches;
+  a subscriber long-polls from an offset and resumes one past the last
+  offset it saw.
+- Running example: payment Workflow `payment-7731`, topics `status`
+  (Workflow code, violet) and `progress` (an Activity's batches, UV), six
+  offsets, a PAYMENT UI subscriber. No customer name appears anywhere.
+
 **Why:** the themes form one series under the Temporal brand, reviewed
 closely frame by frame: a viewer moving between them meets the same title
 card, header, layout, vocabulary and end card, and each new theme starts

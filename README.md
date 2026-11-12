@@ -51,6 +51,11 @@ Each video is a theme:
   sandboxed tools, keys kept with their team, behind Nexus, human
   approvals in code the model cannot bypass, the Event History as a
   searchable audit trail.
+- **Workflow Streams** (`workflow-streams`): for developers, a short
+  explainer in one chapter on Workflow Streams (Public Preview): an event
+  log inside a Workflow, where publishers add events to named topics, every
+  event gets a global offset, and a subscriber long-polls from an offset
+  and resumes after a disconnect with nothing missed.
 
 ![Durable AI Agents at 2:40: after a crash, the agent resumes on another
 app instance and Temporal returns the saved results from the Event

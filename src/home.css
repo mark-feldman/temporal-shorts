@@ -83,6 +83,10 @@
 /* AI Agent Security: the checkpoint bar slides in from the left, a little past its place, and shuts below the
    agent orb. */
 .home .theme:is(:hover,:focus-visible) .gate{animation:icon-gate .6s ease-out backwards}
+/* Workflow Streams: the log cells fill left to right, then empty again. At rest a cell's fill is transparent, which
+   draws the same as no fill. */
+.home .theme-icon .cell{fill:var(--ink);fill-opacity:0}
+.home .theme:is(:hover,:focus-visible) .cell{animation:icon-fill .36s ease-in-out var(--d,0s)}
 /* pathLength="1" on the path: a dash as long as the path, slid from fully hidden to fully shown. */
 @keyframes icon-draw{from{stroke-dasharray:1 2;stroke-dashoffset:1}to{stroke-dasharray:1 2;stroke-dashoffset:0}}
 @keyframes icon-hidden{from,to{opacity:0}}
@@ -99,6 +103,7 @@
 @keyframes icon-knob-down{40%{transform:translateY(5px)}75%{transform:translateY(-.8px)}}
 @keyframes icon-snap{25%,50%{transform:translateY(-2px)}75%{transform:translateY(.5px)}}
 @keyframes icon-gate{from{opacity:0;transform:translateX(-6px)}40%{opacity:1}70%{transform:translateX(.8px)}}
+@keyframes icon-fill{35%,75%{fill-opacity:1}}
 .home .theme-title{font-size:24px;line-height:1.2;letter-spacing:-.2px}
 .home .theme-text{font-size:16px;line-height:1.5;color:var(--slate)}
 @media (max-width:600px){
