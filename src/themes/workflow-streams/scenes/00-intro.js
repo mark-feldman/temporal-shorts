@@ -16,12 +16,11 @@
   // the rows light one after the other, `step` s apart, hold all lit, then start over (ambient loop)
   const LIGHT = { step: 0.6, hold: 1.4 };
   const LOOP = STAGES.length * LIGHT.step + LIGHT.hold;
-  // the ending, from END_BEFORE seconds before the end of the scene: the title sinks away (title), the line pulls
-  // back (link) as the "?" shrinks out (q), the rows shrink out one after the other (rows, rowStep, rowD), and the UI
-  // tile travels and resizes into SUB_TILE (tile, tileD), landing 0.1 s before the cut
+  // the ending, from END_BEFORE seconds before the end of the scene: at once, the title sinks away (titleD), the line
+  // pulls back (linkD) as the "?" shrinks out (qD); then the rows shrink out one after the other (rows, rowStep,
+  // rowD), and the UI tile travels and resizes into SUB_TILE (tile, tileD), landing 0.1 s before the cut
   const END_BEFORE = 1.3;
-  const END = { title: 0, titleD: 0.5, link: 0, linkD: 0.3, q: 0, qD: 0.3, rows: 0.1, rowStep: 0.05, rowD: 0.35,
-    tile: 0.25, tileD: 0.95 };
+  const END = { titleD: 0.5, linkD: 0.3, qD: 0.3, rows: 0.1, rowStep: 0.05, rowD: 0.35, tile: 0.25, tileD: 0.95 };
 
   scene({
     pre: 1.0,
@@ -63,9 +62,8 @@
     },
     update(t, c, s) {
       const endAt = this.dur - END_BEFORE;
-      const end = (key, d, f = ease) => P(t, endAt + END[key], d, f);
 
-      rise(s.t, TITLE.x, TITLE.y, P(t, 0.15, 0.9) * (1 - end('title', END.titleD)));
+      rise(s.t, TITLE.x, TITLE.y, P(t, 0.15, 0.9) * (1 - P(t, endAt, END.titleD)));
 
       // the stages light up in turn: lit rows turn violet, the current one glows; at the ending they shrink out,
       // top to bottom
@@ -84,15 +82,15 @@
       // the UI, which cannot see them: a "?" that breathes; at the ending, it travels and resizes into chapter 1's
       // subscriber tile
       const up = backPop(t, 1.1);
-      const morph = end('tile', END.tileD);
+      const morph = P(t, endAt + END.tile, END.tileD);
       s.ui.style.width = lerp(UI.w, SUB_TILE.w, morph) + 'px';
       s.ui.style.height = lerp(UI.h, SUB_TILE.h, morph) + 'px';
       place(s.ui, lerp(UI.x, SUB_TILE.x, morph), lerp(515, SUB_TILE.y, morph), up.s, up.o);
-      const qOut = end('q', END.qD, easeIn);
+      const qOut = P(t, endAt, END.qD, easeIn);
       s.q.style.opacity = (0.6 + 0.4 * Math.sin(G * 2.4) ** 2) * (1 - qOut);
       s.q.style.transform = `scale(${1 - 0.5 * qOut})`;
       // the dashed line fades in, then pulls back towards the rows
-      drawDashed(s.link, 1 - end('link', END.linkD), P(t, 1.3, 0.4), 8, 10);
+      drawDashed(s.link, 1 - P(t, endAt, END.linkD), P(t, 1.3, 0.4), 8, 10);
     }
   });
 }
