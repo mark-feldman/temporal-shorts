@@ -664,23 +664,18 @@ below and the card order in [Home page design](feedback_home-page.md).
   FOR DEVELOPERS", title "What is a Workflow Stream?", tagline "WORKFLOW
   STREAMS WITH TEMPORAL"; end card tagline "LIVE PROGRESS FROM YOUR
   WORKFLOWS" with the pill "Public Preview".
-- One animation for a forum slide: intro, one topic chapter, outro. No
-  recap and no "What you can build" chapter (user decision). The chapter's
-  last subtitle carries a long `after`, so its final frame holds for a
-  presenter to talk over.
-- Both boundaries are hard cuts carried by motion: the intro's PAYMENT UI
-  tile travels and resizes into ch1's subscriber tile (`SUB_TILE`) as the
-  rest of the intro leaves; at ch1's end everything but the six offset
-  copies recedes and the copies fly into the outro's strip
-  (`OFFSET_STRIP`). Copies enter the UI's list from below the tile, so
-  none passes over a copy already there.
+- One animation for a forum slide: intro, one topic chapter, outro (user
+  decision). The chapter's last subtitle carries a long `after` and the
+  scene sets `holdBeforeEnd`: presenter mode holds on the complete
+  composition, then plays the exit into the outro.
 - The feature is named "Workflow Streams", as in the Temporal docs, never
   "native streaming" (Product's messaging guide); the video states its
-  Public Preview status. Every claim follows docs.temporal.io/workflow-streams
-  and the SDK guides (`### Sources` in `script.md`): offsets are global
-  across topics; Workflow code appends in memory; Activities send batches;
-  a subscriber long-polls from an offset and resumes one past the last
-  offset it saw.
+  Public Preview status. Every claim follows docs.temporal.io/workflow-streams,
+  the SDK guides and the SDK code (`### Sources` in `script.md`): offsets
+  are global across topics (Java guide); Workflow code appends in memory;
+  Activities send batches; a subscriber long-polls from an offset, which
+  is the first offset returned, so it resumes one past the last offset it
+  saw (sdk-python `_collect_batch`, sdk-go `contrib/workflowstreams`).
 - Running example: payment Workflow `payment-7731`, topics `status`
   (Workflow code, violet) and `progress` (an Activity's batches, UV), six
   offsets, a PAYMENT UI subscriber. No customer name appears anywhere.
