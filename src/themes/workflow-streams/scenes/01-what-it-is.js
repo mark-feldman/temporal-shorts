@@ -1,17 +1,17 @@
 // ===================== 1. WHAT A WORKFLOW STREAM IS
 // The Workflow payment-7731 in the middle, its stream log of six offset slots; the Activity on its left, the
 // PAYMENT UI subscriber on its right. The Workflow code and the Activity (in batches) publish to the topics status and
-// progress, one offset count across both; the UI attaches by Workflow Id and long-polls from an offset, waits on the
+// progress, one offset count across both; the UI attaches by Workflow ID and long-polls from an offset, waits on the
 // next one, drops, reconnects from offset 4 and misses nothing. A UV tag closes: no broker, the log lives in the
 // Workflow.
 // The block keeps every name declared in this file local to this scene.
 {
   // Layout, in stage px before the shift: the Workflow panel (x 400-1240) between the Activity (x 120-300) and the
   // UI (x 1500-1800). In the panel, top to bottom: the heading row with the code chip on its right (HEAD_Y), STREAM
-  // over the log (STREAM_Y), the lane the Activity's batches travel along (LANE_Y, level with the Activity's center:
-  // its line enters the panel and ends with an arrow just above and left of slot 0), the log's six cells (CELL_Y,
-  // 128 px apart, x 442-1198), and the poll row under them (POLL_Y), on the line that joins the UI. The UI tile's top
-  // is level with the cells' top, its bottom with the panel's.
+  // over the log (STREAM_Y), the lane the Activity's batches travel along (LANE_Y, level with the Activity's center
+  // and with its line, which runs to the panel's left edge), the log's six cells (CELL_Y, 128 px apart, x 442-1198),
+  // and the poll row under them (POLL_Y), on the line that joins the UI. The UI tile's top is level with the cells'
+  // top, its bottom with the panel's.
   const PANEL = { x0: 400, x1: 1240, y0: 240, y1: 676 };
   const HEAD_Y = 290, STREAM_Y = 332, LANE_Y = 376, CELL_Y = 494, POLL_Y = 632;
   const cellX = i => 500 + i * 128;
@@ -21,8 +21,11 @@
   const UI = { x0: 1500, x1: 1800, y0: CELL_Y - LOG_CELL.h / 2, y1: PANEL.y1 };
   // the middle of the gap between the panel and the UI: the connection's label and the DISCONNECTED tag
   const GAP_X = (PANEL.x1 + UI.x0) / 2;
-  // where a batch pops in, between the Activity and the panel; where a poll pops in, beside the UI
-  const BATCH_FROM_X = 350, POLL_FROM_X = 1420;
+  // the connection's label, LINK_LABEL.w px wide (even: it rests on whole pixels), centered 72 px above the poll row:
+  // 20 px clear of the 56 px high copies that travel along the row
+  const LINK_LABEL = { w: 160, y: POLL_Y - 72 };
+  // where a poll pops in, beside the UI
+  const POLL_FROM_X = 1420;
   // the closing tag, 40 px under the panel
   const NO_BROKER_Y = PANEL.y1 + 40 + 33;
   // a list slot of the UI, on the stage
@@ -49,19 +52,18 @@
   // of 4 and 5; the closing tag
   const T4 = { drop: 0.2, publish4: 0.7, batch: 1.2, reconnect: 2.8, poll4: 3.1, copies: 4.2, noBroker: 5.5 };
 
-  // A status event published by the code: it pops on the code chip at `at`, flies to its cell and is absorbed there.
-  // Its cell fills at at + STATUS_LAND.
-  const STATUS_LAND = 0.6;
-  const flyStatus = (chip, t, at, i) => fly(chip, t, at, CODE.x, CODE.y, at + 0.1, 0.55, cellX(i), CELL_Y, at + 0.65,
-    cellX(i), CELL_Y);
-  // An Activity batch: one chip pops between the Activity and the panel, travels along the Activity's line and on
+  // A status event published by the code: it pops on the code chip at `at` and flies to its cell (flyChip), whose
+  // fill starts at at + STATUS_LAND, as the chip is absorbed there.
+  const STATUS_LAND = 0.5;
+  // An Activity batch: one chip pops in at the end of the Activity's line, its left edge on the panel's, travels
   // along the lane until it is over its cells, and splits there into one chip per event, which drop into their cells.
   // Its cells fill at at + BATCH_LAND.
   const BATCH_LAND = 1.25;
   const flyBatch = (batch, t, at) => {
     const xs = batch.offsets.map(cellX);
     const overX = (xs[0] + xs[xs.length - 1]) / 2;
-    fly(batch.chip, t, at, BATCH_FROM_X, LANE_Y, at + 0.15, 0.7, overX, LANE_Y, at + 0.85, overX, LANE_Y);
+    const fromX = PANEL.x0 + batch.chip.offsetWidth / 2;
+    fly(batch.chip, t, at, fromX, LANE_Y, at + 0.15, 0.7, overX, LANE_Y, at + 0.85, overX, LANE_Y);
     batch.parts.forEach((part, k) => fly(part, t, at + 0.85, overX, LANE_Y, at + 0.9, 0.4, xs[k], CELL_Y, at + 1.3,
       xs[k], CELL_Y));
   };
@@ -77,17 +79,16 @@
       { text: "A <b>Workflow Stream</b> is an event log inside a Workflow: publishers add events to named topics." },
       { text: "Each event gets the next <b>offset</b>: 0, 1, 2, 3, one count across every topic." },
       {
-        text: "A subscriber attaches by Workflow Id and long-polls from an offset: it gets every event from there on.",
+        text: "A subscriber attaches by Workflow ID and long-polls from an offset: it gets every event from there on.",
       },
       // a long hold on the final frame, for a presenter to talk over
-      { text: "If it drops, events keep arriving; it reconnects from offset 4 and misses nothing.", after: 2.5 },
+      { text: "If the UI drops, events keep arriving; it reconnects from offset 4 and misses nothing.", after: 2.5 },
     ],
     build(root, s) {
       s.svg = svgLayer(root);
-      // the Activity's line runs into the panel and points at the stream, just above and left of slot 0
-      const laneEnd = cellX(0) - LOG_CELL.w / 2 - 6;
-      s.activityLink = path(s.svg, `M ${ACTIVITY.x + ACTIVITY.size / 2 + 4} ${LANE_Y} L ${laneEnd} ${LANE_Y}`,
-        C.slate, 2);
+      // the Activity's line, from its tile to the panel's left edge, where its batches pop in
+      s.activityLink = path(s.svg, `M ${ACTIVITY.x + ACTIVITY.size / 2 + 4} ${LANE_Y} L ${PANEL.x0} ${LANE_Y}`,
+        C.slate, 2, false);
       // the subscriber's connection, drawn from the UI to the panel; its red dashed twin while it is down
       const lineD = `M ${UI.x0 - 2} ${POLL_Y} L ${PANEL.x1 + 2} ${POLL_Y}`;
       s.link = path(s.svg, lineD, C.slate, 3, false);
@@ -105,7 +106,7 @@
       s.linkLabel = E(root,
         '<div class="lbl" style="font-size:18px;line-height:24px">Workflow ID</div>'
         + `<div class="mono" style="font-size:18px;line-height:24px">${WORKFLOW_ID}</div>`,
-        '', { textAlign: 'center' });
+        '', { width: LINK_LABEL.w + 'px', textAlign: 'center' });
       s.down = fixedTag(root, 'Disconnected', 'red solid', null);
       Object.assign(s.down.style, { fontSize: '18px', lineHeight: '26px', padding: '6px 12px 6px calc(12px + .1em)' });
 
@@ -125,8 +126,8 @@
       s.copies = STREAM_EVENTS.map((event, i) => makeOffsetChip(root, i, event.topic,
         { w: SUB_LIST.w, h: SUB_LIST.h, font: SUB_LIST.font }));
 
-      s.noBroker = tag(root, 'No broker: the log lives in the Workflow', 'uv big');
-      s.chips = [s.code, s.down, ...s.status.map(e => e.chip), ...s.batches.flatMap(b => [b.chip, ...b.parts]),
+      s.noBroker = fixedTag(root, 'No broker: the log lives in the Workflow', 'uv big', null);
+      s.chips = [s.code, s.down, s.noBroker, ...s.status.map(e => e.chip), ...s.batches.flatMap(b => [b.chip, ...b.parts]),
         s.poll0, s.pollWait, s.pollAgain];
     },
     update(t, c, s) {
@@ -144,7 +145,8 @@
       const up = backPop(t, 0.3);
       place(s.ui, (UI.x0 + UI.x1) / 2, (UI.y0 + UI.y1) / 2, up.s, up.o);
       const codeK = statusAts.reduce((k, at) => k * swell(t, at, 0.08), 1);
-      place(s.code, CODE.x, CODE.y, popIn(t, 0.35).s * codeK, popIn(t, 0.35).o);
+      const cp = popIn(t, 0.35);
+      place(s.code, CODE.x, CODE.y, cp.s * codeK, cp.o);
 
       // the log: six empty slots, each filling as its event lands; the offsets 0 to 3 pulse as the subtitle reads them
       const fillAts = [statusAts[0], batchAts[0], batchAts[0], statusAts[1], statusAts[2], batchAts[1]]
@@ -157,7 +159,7 @@
       });
 
       // the publishers
-      s.status.forEach(({ i, chip }, k) => flyStatus(chip, t, statusAts[k], i));
+      s.status.forEach(({ i, chip }, k) => flyChip(chip, t, statusAts[k], CODE.x, CODE.y, cellX(i), CELL_Y));
       s.batches.forEach((batch, k) => flyBatch(batch, t, batchAts[k]));
 
       // the connection: drawn as the UI attaches, red and dashed while it is down, drawn again on the reconnect
@@ -167,14 +169,13 @@
       s.broken.style.opacity = win(t, at4('drop'), at4('reconnect'), 0.15);
       const lp = popIn(t, at3('label'));
       const downDim = 1 - 0.6 * win(t, at4('drop'), at4('reconnect'), 0.15);
-      place(s.linkLabel, GAP_X, POLL_Y - 48, lp.s, lp.o * downDim);
+      place(s.linkLabel, GAP_X, LINK_LABEL.y, lp.s, lp.o * downDim);
       const dp = popIn(t, at4('drop') + 0.15);
       place(s.down, GAP_X, POLL_Y + 44, dp.s, dp.o * (1 - P(t, at4('reconnect'), 0.3)));
 
       // poll from 0: slides under offset 0 and is taken in there
       const p0 = backPop(t, at3('poll0'), 0.35);
       const p0In = P(t, at3('poll0') + 0.9, 0.3, easeIn);
-      setPollChip(s.poll0);
       place(s.poll0, pollX(t, at3('poll0'), cellX(0)), POLL_Y, p0.s * (1 - 0.6 * p0In), p0.o * (1 - p0In));
       // poll from 4: slides under the empty slot 4 and waits there (the long poll), until the connection drops
       const pw = backPop(t, at3('poll4'), 0.35);
@@ -184,7 +185,6 @@
       // poll from 4 again, after the reconnect: slot 4 and 5 are filled, so it is answered at once
       const pa = backPop(t, at4('poll4'), 0.35);
       const paIn = P(t, at4('poll4') + 0.9, 0.3, easeIn);
-      setPollChip(s.pollAgain);
       place(s.pollAgain, pollX(t, at4('poll4'), cellX(4)), POLL_Y, pa.s * (1 - 0.6 * paIn), pa.o * (1 - paIn));
 
       // the copies: 0 to 3 answer the first poll, 4 and 5 the poll after the reconnect; each one stays in its slot

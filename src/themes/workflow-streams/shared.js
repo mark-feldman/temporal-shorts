@@ -1,4 +1,6 @@
 // ===================== Workflow Streams helpers (shared by the scenes of this theme)
+// Most of them build chapter 1's components (the stream log, its publishers and its subscriber); the intro reuses
+// the PAYMENT UI heading, the outro the running example's events and the offset chips.
 // Extra stroke icons (24 grid), in the hand-drawn style of engine.js
 Object.assign(ICONS, {
   // a browser window: its frame, the tab bar and two dots on it
@@ -58,15 +60,15 @@ function makeLogCell(root, offset, { topic, text }) {
   cell.topic = TOPICS[topic];
   return cell;
 }
-// fill: 0 empty to 1 filled (the event's content fades in once the slot turns solid); pulse: 0 to 1, a glow and
-// swell of the offset number while it is read out
+// fill: 0 empty to 1 filled (the event's content fades in once the slot turns solid); pulse: 0 to 1, a glow in its
+// topic's color and swell of the offset number while it is read out
 function setLogCell(cell, fill, pulse = 0) {
   const { color, rgb } = cell.topic;
   cell.style.border = fill > 0 ? `1px solid ${color}` : `1px dashed ${C.lineLight}`;
   cell.style.background = fill > 0 ? `rgba(${rgb},${(0.1 * fill).toFixed(3)})` : 'transparent';
   cell.body.style.opacity = fill;
   cell.num.style.transform = `scale(${1 + 0.22 * pulse})`;
-  cell.num.style.textShadow = glowShadow(RGB.violet, pulse, { blur: 18 });
+  cell.num.style.textShadow = glowShadow(rgb, pulse, { blur: 18 });
 }
 
 // An offset received, as a small square chip in its topic's color holding the offset number: the copies that travel
@@ -110,6 +112,10 @@ function makeCodeChip(root) {
     C.violet, 'var(--violet-solid)');
 }
 
+// The heading of a PAYMENT UI tile, its browser icon and label, top px under the tile's top edge (HTML)
+const uiHeadingHtml = top => `<div style="position:absolute;left:20px;top:${top}px;height:32px;display:flex;`
+  + `align-items:center;gap:12px">${ICON('browser', 32, C.ink, 1.6)}<span class="lbl">Payment UI</span></div>`;
+
 // The subscriber, w x h: a PAYMENT UI tile with a fixed-width readout of the next offset it asks for (SUB_READOUT),
 // then its list of the offsets received, a 3 x 2 grid of dashed slots (SUB_LIST), both from its top left corner;
 // tile.slots: the slots, which the scene hides once an offset chip rests on one, so no dash shows round it
@@ -128,8 +134,7 @@ function makeSubscriberTile(root, w, h) {
       + '</div>';
   }).join('');
   const tile = E(root,
-    '<div style="position:absolute;left:20px;top:18px;height:32px;display:flex;align-items:center;gap:12px">'
-    + `${ICON('browser', 32, C.ink, 1.6)}<span class="lbl">Payment UI</span></div>`
+    uiHeadingHtml(18)
     + slots
     + `<div class="readout mono" style="position:absolute;left:${(w - SUB_READOUT.w) / 2}px;`
     + `top:${SUB_READOUT.top}px;width:${SUB_READOUT.w}px;height:${SUB_READOUT.h}px;line-height:${SUB_READOUT.h - 2}px;`
@@ -147,7 +152,7 @@ function setReadout(tile, t, n, o, changedAt = -1) {
 }
 
 // A subscriber's long poll from an offset: a neutral chip; one that waits carries a violet spinner, hidden until
-// setPollChip shows it
+// setPollChip() shows it
 function makePollChip(root, from, waits = false) {
   const wait = waits ? `<span class="wait" style="opacity:0">${spinnerRing(18)}</span>` : '';
   const chip = makeChip(root,
@@ -157,10 +162,10 @@ function makePollChip(root, from, waits = false) {
   chip.spin = chip.querySelector('.spin');
   return chip;
 }
-// wait: opacity of the spinner, which turns on the ambient clock; failed: the poll's connection dropped (red border)
-function setPollChip(chip, { wait = 0, failed = false } = {}) {
+// A poll chip that waits: wait, the opacity of its spinner, which turns on the ambient clock; failed, its connection
+// dropped (red border)
+function setPollChip(chip, { wait, failed }) {
   chip.style.borderColor = failed ? C.red : C.slate;
-  if (!chip.wait) return;
   chip.wait.style.opacity = wait;
   chip.spin.style.transform = `rotate(${G * 400}deg)`;
 }

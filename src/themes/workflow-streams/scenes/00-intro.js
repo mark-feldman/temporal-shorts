@@ -40,14 +40,13 @@
         return row;
       });
       s.ui = E(root,
-        '<div style="position:absolute;left:20px;top:22px;height:32px;display:flex;align-items:center;gap:12px">'
-        + `${ICON('browser', 32, C.ink, 1.6)}<span class="lbl">Payment UI</span></div>`
+        uiHeadingHtml(22)
         + `<div class="q mono" style="position:absolute;left:0;right:0;top:140px;font-size:140px;line-height:160px;`
         + `color:${C.violet}">?</div>`,
         'tile', { width: UI.w + 'px', height: UI.h + 'px' });
       s.q = s.ui.querySelector('.q');
       s.t = makeTitleBlock(root, 'AN EXPLAINER FOR DEVELOPERS', 'What is a<br>Workflow Stream?',
-        'WORKFLOW STREAMS WITH TEMPORAL', { titleFont: 100, titleLineHeight: 1.04 });
+        'WORKFLOW STREAMS WITH TEMPORAL', { titleFont: 100, titleLineHeight: 1.04, box: [806, 428] });
     },
     update(t, c, s) {
       rise(s.t, TITLE.x, TITLE.y, P(t, 0.15, 0.9));

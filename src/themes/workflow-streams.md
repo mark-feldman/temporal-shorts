@@ -14,8 +14,8 @@ still running?
 
 A Workflow Stream is an event log inside a Workflow: publishers add events to
 named topics. Each event gets the next offset: 0, 1, 2, 3, one count across
-every topic. A subscriber attaches by Workflow Id and long-polls from an offset:
-it gets every event from there on. If it drops, events keep arriving; it
+every topic. A subscriber attaches by Workflow ID and long-polls from an offset:
+it gets every event from there on. If the UI drops, events keep arriving; it
 reconnects from offset 4 and misses nothing.
 
 Source: [Workflow Streams (Temporal docs)](https://docs.temporal.io/workflow-streams)

@@ -55,11 +55,13 @@ the visuals belong to each theme (last section).
 - Recap: **What you get** has its own scene file after the topic
   chapters. Recap tiles and subtitles live there, never in a topic
   chapter, so every chapter title stays true to its content.
+  workflow-streams, a single-chapter explainer, has no recap.
 - Use cases: every explainer has a **What you can build** chapter after
   the recap, right before the outro (`NN-use-cases.js`); a product
   presentation (agent-harness), a guide (worker-tuning) and
   ai-agent-security, whose incidents are its concrete cases, end on their
-  recap. Topic lists in
+  recap; workflow-streams, a single-chapter explainer, has neither
+  chapter and ends on its topic chapter. Topic lists in
   `script.md` leave out both chapters.
   - The scene is one `useCaseScene({ chapter, uses, namedAt, subs })`
     call (`src/shared.js`). 4 `useCaseTile`s (icon, uppercase label,
