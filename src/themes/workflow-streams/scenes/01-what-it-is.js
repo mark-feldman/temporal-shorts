@@ -232,7 +232,10 @@
         text: "A subscriber attaches by Workflow ID and long-polls from an offset: it gets every event from there on.",
       },
       // a long hold on the final frame (about 2.5 s), for a presenter to talk over, then the ending
-      { text: "If the UI drops, events keep arriving; it reconnects from offset 4 and misses nothing.", after: 3.4 },
+      {
+        text: "If the UI drops, the log keeps growing; it reconnects from offset 4 and misses nothing.",
+        after: 3.4,
+      },
     ],
     build(stage, s) {
       // everything but the copies in one layer, which recedes as a whole at the ending; its scale centers on the

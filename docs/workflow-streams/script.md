@@ -72,7 +72,7 @@ Activity in batches), read by a PAYMENT UI. No customer name appears.
     each one into its slot from below, so no copy passes over another;
     "next offset 4"; a second "poll from 4" waits at slot 4 with a
     spinner: the long poll.
-- **0:29** If the UI drops, events keep arriving; it reconnects from
+- **0:29** If the UI drops, the log keeps growing; it reconnects from
   offset 4 and misses nothing.
   - Visuals: the line turns red and dashed, DISCONNECTED; `status`
     "approval started" lands in offset 4 and a one-event batch from the
