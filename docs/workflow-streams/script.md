@@ -14,8 +14,8 @@ Developers learn what a Temporal Workflow Stream is, in one chapter: an
 event log inside a Workflow, filled by publishers on named topics, read by
 subscribers that long-poll from an offset and resume after a disconnect.
 The video is one animation for a forum slide, so it has no recap and no
-"What you can build" chapter. The chapter's last frame holds so a presenter
-can talk over it.
+"What you can build" chapter. The chapter's complete composition holds
+before its exit so a presenter can talk over it.
 
 Running example: a payment Workflow, `payment-7731`, with the topics
 `status` (published by the Workflow code) and `progress` (published by an
@@ -27,11 +27,15 @@ Activity in batches), read by a PAYMENT UI. No customer name appears.
   Preview; a durable, offset-addressed event log hosted in a Workflow;
   Workflow code appends in memory; Activities and clients buffer events and
   flush each batch as one Signal; a subscriber long-polls from an offset.
-- Java SDK guide and Go SDK guide:
-  <https://docs.temporal.io/develop/java/workflows/workflow-streams>,
-  <https://docs.temporal.io/develop/go/workflows/workflow-streams>;
-  offsets are global across all topics, not per topic; a subscriber
-  resumes from one past the last offset it consumed.
+- Java SDK guide:
+  <https://docs.temporal.io/develop/java/workflows/workflow-streams>;
+  offsets are global across all topics, not per topic.
+- The SDK sources: `from_offset` is the first offset a poll returns, so a
+  subscriber resumes from one past the last offset it consumed. Python,
+  `_collect_batch` in
+  <https://github.com/temporalio/sdk-python/blob/main/temporalio/contrib/workflow_streams/_stream.py>;
+  Go,
+  <https://github.com/temporalio/sdk-go/blob/main/contrib/workflowstreams/workflow.go>.
 
 ## Intro
 

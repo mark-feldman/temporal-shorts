@@ -223,7 +223,7 @@
     // hard cuts: the intro ends on this chapter's first frame (the UI tile alone, at SUB_TILE), this chapter on the
     // outro's (the six copies in OFFSET_STRIP)
     fadeIn: 0, fadeOut: 0,
-    // presenter mode holds on the final frame, then plays the ending into the outro in one go
+    // presenter mode holds on the complete composition, then plays the ending into the outro in one go
     holdBeforeEnd: END_BEFORE,
     subs: [
       { text: "A <b>Workflow Stream</b> is an event log inside a Workflow: publishers add events to named topics." },
@@ -231,7 +231,7 @@
       {
         text: "A subscriber attaches by Workflow ID and long-polls from an offset: it gets every event from there on.",
       },
-      // a long hold on the final frame (about 2.5 s), for a presenter to talk over, then the ending
+      // a long hold on the complete composition (about 2.5 s), for a presenter to talk over, then the ending
       {
         text: "If the UI drops, the log keeps growing; it reconnects from offset 4 and misses nothing.",
         after: 3.4,
