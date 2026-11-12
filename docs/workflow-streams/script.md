@@ -58,11 +58,11 @@ Activity in batches), read by a PAYMENT UI. No customer name appears.
     dashed slots as the rest comes in round it: ACTIVITY tile ("funds
     check") on the left, its line running to the edge of the WORKFLOW
     `payment-7731` panel; a "workflow code" chip in the panel heading; the
-    STREAM, six empty dashed slots. The
-    Workflow code publishes `status` "validation started" into offset 0;
-    a "batch: 2 events" chip pops in where the Activity's line meets the
-    panel and travels above the log, then splits into `progress`
-    "checking account" and "balance ok", offsets 1 and 2.
+    STREAM, six empty dashed slots. The Workflow code publishes `status`
+    "validation started" into offset 0; a "batch: 2 events" chip pops in
+    where the Activity's line meets the panel and travels above the log,
+    then splits into `progress` "checking account" and "balance ok",
+    offsets 1 and 2.
 - **0:16** Each event gets the next offset: 0, 1, 2, 3, one count across
   every topic.
   - Visuals: the Workflow code publishes `status` "validation passed" into

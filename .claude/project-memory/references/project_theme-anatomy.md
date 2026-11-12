@@ -671,7 +671,7 @@ below and the card order in [Home page design](feedback_home-page.md).
 - The feature is named "Workflow Streams", as in the Temporal docs, never
   "native streaming" (Product's messaging guide); the video states its
   Public Preview status. Every claim follows docs.temporal.io/workflow-streams,
-  the SDK guides and the SDK code (`### Sources` in `script.md`): offsets
+  the Java SDK guide and the SDK code (`### Sources` in `script.md`): offsets
   are global across topics (Java guide); Workflow code appends in memory;
   Activities send batches; a subscriber long-polls from an offset, which
   is the first offset returned, so it resumes one past the last offset it
