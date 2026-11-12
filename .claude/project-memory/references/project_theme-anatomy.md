@@ -668,6 +668,12 @@ below and the card order in [Home page design](feedback_home-page.md).
   recap and no "What you can build" chapter (user decision). The chapter's
   last subtitle carries a long `after`, so its final frame holds for a
   presenter to talk over.
+- Both boundaries are hard cuts carried by motion: the intro's PAYMENT UI
+  tile travels and resizes into ch1's subscriber tile (`SUB_TILE`) as the
+  rest of the intro leaves; at ch1's end everything but the six offset
+  copies recedes and the copies fly into the outro's strip
+  (`OFFSET_STRIP`). Copies enter the UI's list from below the tile, so
+  none passes over a copy already there.
 - The feature is named "Workflow Streams", as in the Temporal docs, never
   "native streaming" (Product's messaging guide); the video states its
   Public Preview status. Every claim follows docs.temporal.io/workflow-streams

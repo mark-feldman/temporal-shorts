@@ -27,8 +27,9 @@ Activity in batches), read by a PAYMENT UI. No customer name appears.
   Preview; a durable, offset-addressed event log hosted in a Workflow;
   Workflow code appends in memory; Activities and clients buffer events and
   flush each batch as one Signal; a subscriber long-polls from an offset.
-- [Java SDK guide](https://docs.temporal.io/develop/java/workflows/workflow-streams)
-  and [Go SDK guide](https://docs.temporal.io/develop/go/workflows/workflow-streams):
+- Java SDK guide and Go SDK guide:
+  <https://docs.temporal.io/develop/java/workflows/workflow-streams>,
+  <https://docs.temporal.io/develop/go/workflows/workflow-streams>;
   offsets are global across all topics, not per topic; a subscriber
   resumes from one past the last offset it consumed.
 
@@ -40,20 +41,25 @@ Activity in batches), read by a PAYMENT UI. No customer name appears.
     "What is a Workflow Stream?", tagline "WORKFLOW STREAMS WITH TEMPORAL";
     on the right the seven payment stages (validation, approval, funds
     transfer, ledgering, verification, confirmation, settlement) light up
-    in turn beside a PAYMENT UI tile showing a "?".
+    in turn beside a PAYMENT UI tile showing a "?". At the end the title
+    sinks away, the dashed line pulls back, the "?" and the rows shrink
+    out, and the PAYMENT UI tile travels and resizes into chapter 1's
+    subscriber tile: chapter 1 opens on that frame, with no fade.
 
 ## 01 What a Workflow Stream is
 
 - **0:09** A Workflow Stream is an event log inside a Workflow: publishers
   add events to named topics.
-  - Visuals: ACTIVITY tile ("funds check") on the left, its line running
-    to the edge of the WORKFLOW `payment-7731` panel; a "workflow code"
-    chip in the panel heading; the STREAM, six empty dashed slots. The
+  - Visuals: the PAYMENT UI tile, left by the intro, gains its list of six
+    dashed slots as the rest comes in round it: ACTIVITY tile ("funds
+    check") on the left, its line running to the edge of the WORKFLOW
+    `payment-7731` panel; a "workflow code" chip in the panel heading; the
+    STREAM, six empty dashed slots. The
     Workflow code publishes `status` "validation started" into offset 0;
     a "batch: 2 events" chip pops in where the Activity's line meets the
     panel and travels above the log, then splits into `progress`
     "checking account" and "balance ok", offsets 1 and 2.
-- **0:15** Each event gets the next offset: 0, 1, 2, 3, one count across
+- **0:16** Each event gets the next offset: 0, 1, 2, 3, one count across
   every topic.
   - Visuals: the Workflow code publishes `status` "validation passed" into
     offset 3; the offsets 0 to 3 pulse in turn, each in its topic's color,
@@ -62,21 +68,27 @@ Activity in batches), read by a PAYMENT UI. No customer name appears.
   offset: it gets every event from there on.
   - Visuals: the PAYMENT UI connects (WORKFLOW ID `payment-7731` above
     the line); "poll from 0" goes to the log, copies of 0 to 3 travel back
-    into the UI's list, "next offset 4"; a second "poll from 4" waits at
-    slot 4 with a spinner: the long poll.
-- **0:28** If the UI drops, events keep arriving; it reconnects from
+    along the line, drop under the UI tile and rise into the UI's list,
+    each one into its slot from below, so no copy passes over another;
+    "next offset 4"; a second "poll from 4" waits at slot 4 with a
+    spinner: the long poll.
+- **0:29** If the UI drops, events keep arriving; it reconnects from
   offset 4 and misses nothing.
   - Visuals: the line turns red and dashed, DISCONNECTED; `status`
     "approval started" lands in offset 4 and a one-event batch from the
     Activity, `progress` "risk check", in offset 5; the UI reconnects,
-    polls from 4, receives 4 and 5, "next offset 6", its list complete;
-    the tag "No broker: the log lives in the Workflow" pops under the
-    composition and holds.
+    polls from 4, receives 4 and 5 (from below, like the first copies),
+    "next offset 6", its list complete; the tag "No broker: the log lives
+    in the Workflow" pops under the composition and holds about 2.5 s.
+    Then everything but the six copies recedes, shrinking a little as it
+    fades, while the copies leave the list in offset order and fly into
+    one row above the middle, taking the outro strip's size: the outro
+    opens on that frame, with no fade.
 
 ## Outro
 
-- **0:38** Workflow Streams: live progress from a Workflow, with no broker
+- **0:39** Workflow Streams: live progress from a Workflow, with no broker
   to run.
-  - Visuals: six offset chips colored by topic above the end card
-    "Workflow Streams", tagline "LIVE PROGRESS FROM YOUR WORKFLOWS", pill
-    "Public Preview", Temporal logo.
+  - Visuals: the six offset chips from chapter 1, colored by topic, above
+    the end card, which fades in: "Workflow Streams", tagline "LIVE
+    PROGRESS FROM YOUR WORKFLOWS", pill "Public Preview", Temporal logo.

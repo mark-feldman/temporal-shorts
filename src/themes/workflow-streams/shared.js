@@ -1,6 +1,8 @@
 // ===================== Workflow Streams helpers (shared by the scenes of this theme)
 // Most of them build chapter 1's components (the stream log, its publishers and its subscriber); the intro reuses
-// the PAYMENT UI heading, the outro the running example's events and the offset chips.
+// the PAYMENT UI heading, the outro the running example's events and the offset chips. The scenes cut hard into each
+// other: the intro's UI tile turns into chapter 1's subscriber tile (SUB_TILE), and chapter 1's offset copies fly
+// into the outro's strip (OFFSET_STRIP).
 // Extra stroke icons (24 grid), in the hand-drawn style of engine.js
 Object.assign(ICONS, {
   // a browser window: its frame, the tab bar and two dots on it
@@ -71,15 +73,26 @@ function setLogCell(cell, fill, pulse = 0) {
   cell.num.style.textShadow = glowShadow(rgb, pulse, { blur: 18 });
 }
 
-// An offset received, as a small square chip in its topic's color holding the offset number: the copies that travel
-// back to the subscriber, its list, the outro's strip
-function makeOffsetChip(root, offset, topic, { w, h, font }) {
+// An offset received, as a small chip in its topic's color holding the offset number: the copies that travel back
+// to the subscriber, its list, the outro's strip
+function makeOffsetChip(root, offset, topic, size) {
   const { color, solid } = TOPICS[topic];
-  return E(root, String(offset), 'mono', {
-    width: w + 'px', height: h + 'px', lineHeight: (h - 2) + 'px', fontSize: font + 'px', textAlign: 'center',
-    border: `1px solid ${color}`, borderRadius: 'var(--rs)', background: solid,
+  const chip = E(root, String(offset), 'mono', {
+    textAlign: 'center', border: `1px solid ${color}`, borderRadius: 'var(--rs)', background: solid,
   });
+  sizeOffsetChip(chip, size);
+  return chip;
 }
+// An offset chip's size, w x h px, and the font size of its number: chapter 1's copies take the strip's size as they
+// fly into it
+function sizeOffsetChip(chip, { w, h, font }) {
+  Object.assign(chip.style, { width: w + 'px', height: h + 'px', lineHeight: (h - 2) + 'px', fontSize: font + 'px' });
+}
+// The outro's strip of offset chips on screen (scene shifts included): six square chips, size px, pitch px apart,
+// centered on x 960, their centers on the line y, at the tagline-to-logo gap (about 80 px) above the end card's
+// title; chapter 1's copies fly into it, then the outro opens on it
+const OFFSET_STRIP = { y: 278, size: 64, pitch: 76, font: 28 };
+const stripX = i => 960 + (i - (STREAM_EVENTS.length - 1) / 2) * OFFSET_STRIP.pitch;
 
 // The Activity publisher: a tile with its icon, ACTIVITY and its task, size x size
 function makeActivityTile(root, task, size) {
@@ -112,6 +125,9 @@ function makeCodeChip(root) {
     C.violet, 'var(--violet-solid)');
 }
 
+// Chapter 1's subscriber tile on screen (its scene's shift included), x y its center, w x h: the intro's PAYMENT UI
+// tile turns into it, then chapter 1 opens on it
+const SUB_TILE = { x: 1650, y: 545, w: 300, h: 270 };
 // The heading of a PAYMENT UI tile, its browser icon and label, top px under the tile's top edge (HTML)
 const uiHeadingHtml = top => `<div style="position:absolute;left:20px;top:${top}px;height:32px;display:flex;`
   + `align-items:center;gap:12px">${ICON('browser', 32, C.ink, 1.6)}<span class="lbl">Payment UI</span></div>`;

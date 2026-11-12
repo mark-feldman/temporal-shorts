@@ -10,7 +10,7 @@ still running?
 
 ## Chapter 1: What a Workflow Stream is
 
-[Watch from 0:09](/themes/workflow-streams/#t=9)
+[Watch from 0:10](/themes/workflow-streams/#t=10)
 
 A Workflow Stream is an event log inside a Workflow: publishers add events to
 named topics. Each event gets the next offset: 0, 1, 2, 3, one count across
@@ -22,6 +22,6 @@ Source: [Workflow Streams (Temporal docs)](https://docs.temporal.io/workflow-str
 
 ## Outro
 
-[Watch from 0:38](/themes/workflow-streams/#t=38)
+[Watch from 0:40](/themes/workflow-streams/#t=40)
 
 Workflow Streams: live progress from a Workflow, with no broker to run.

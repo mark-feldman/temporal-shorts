@@ -1,10 +1,12 @@
 // ===================== INTRO
 // Title on the left; on the right, the payment's seven stages as a column of rows that light up in turn (violet, a
 // loop on the ambient clock), and a PAYMENT UI tile beside them, joined by a dashed line, that shows only a "?".
+// At the end the title sinks away, the line pulls back, the "?" and the rows shrink out, and the UI tile travels and
+// resizes into chapter 1's subscriber tile (SUB_TILE): chapter 1 opens on that frame.
 // The block keeps every name declared in this file local to this scene.
 {
   const TITLE = { x: 560, y: 515 };
-  // the stage rows, w x h, gap px apart, centered on x and on the content frame's middle (y 515): they span y 245-785
+  // the stage rows, w x h, gap px apart, centered on x and on the content frame's middle (y 515): they span y 249-781
   const ROWS = { x: 1240, w: 300, h: 64, gap: 14 };
   const STAGES = ['validation', 'approval', 'funds transfer', 'ledgering', 'verification', 'confirmation',
     'settlement'];
@@ -14,20 +16,30 @@
   // the rows light one after the other, `step` s apart, hold all lit, then start over (ambient loop)
   const LIGHT = { step: 0.6, hold: 1.4 };
   const LOOP = STAGES.length * LIGHT.step + LIGHT.hold;
+  // the ending, from END_BEFORE seconds before the end of the scene: the title sinks away (title), the line pulls
+  // back (link) as the "?" shrinks out (q), the rows shrink out one after the other (rows, rowStep, rowD), and the UI
+  // tile travels and resizes into SUB_TILE (tile, tileD), landing 0.1 s before the cut
+  const END_BEFORE = 1.3;
+  const END = { title: 0, titleD: 0.5, link: 0, linkD: 0.3, q: 0, qD: 0.3, rows: 0.1, rowStep: 0.05, rowD: 0.35,
+    tile: 0.25, tileD: 0.95 };
 
   scene({
     pre: 1.0,
+    // a hard cut: the UI tile, resized into SUB_TILE, is chapter 1's first frame
+    fadeOut: 0,
+    // presenter mode holds on the question, then plays the ending into chapter 1 in one go
+    holdBeforeEnd: END_BEFORE,
     subs: [
+      // a moment on the question before the ending
       {
         text: "A payment runs seven stages. How does a UI show each one while the Workflow is still running?",
-        after: 0.8,
+        after: 1.2,
       },
     ],
     build(root, s) {
       s.svg = svgLayer(root);
       const x0 = ROWS.x + ROWS.w / 2 + 4, x1 = UI.x - UI.w / 2 - 4;
       s.link = path(s.svg, `M ${x0} 515 L ${x1} 515`, C.slate, 2, false);
-      s.link.setAttribute('stroke-dasharray', '8 10');
       s.rows = STAGES.map((stage, i) => {
         const row = E(root,
           `<span class="num mono" style="font-size:20px;color:var(--slate);width:22px">${i + 1}</span>`
@@ -39,19 +51,24 @@
         row.num = row.querySelector('.num');
         return row;
       });
+      // its heading at the same place as on chapter 1's subscriber tile, which it turns into
       s.ui = E(root,
-        uiHeadingHtml(22)
+        uiHeadingHtml(18)
         + `<div class="q mono" style="position:absolute;left:0;right:0;top:140px;font-size:140px;line-height:160px;`
         + `color:${C.violet}">?</div>`,
-        'tile', { width: UI.w + 'px', height: UI.h + 'px' });
+        'tile');
       s.q = s.ui.querySelector('.q');
       s.t = makeTitleBlock(root, 'AN EXPLAINER FOR DEVELOPERS', 'What is a<br>Workflow Stream?',
         'WORKFLOW STREAMS WITH TEMPORAL', { titleFont: 100, titleLineHeight: 1.04, box: [806, 428] });
     },
     update(t, c, s) {
-      rise(s.t, TITLE.x, TITLE.y, P(t, 0.15, 0.9));
+      const endAt = this.dur - END_BEFORE;
+      const end = (key, d, f = ease) => P(t, endAt + END[key], d, f);
 
-      // the stages light up in turn: lit rows turn violet, the current one glows
+      rise(s.t, TITLE.x, TITLE.y, P(t, 0.15, 0.9) * (1 - end('title', END.titleD)));
+
+      // the stages light up in turn: lit rows turn violet, the current one glows; at the ending they shrink out,
+      // top to bottom
       const lit = Math.floor((G % LOOP) / LIGHT.step);
       s.rows.forEach((row, i) => {
         const on = i <= lit;
@@ -60,14 +77,22 @@
         row.style.boxShadow = i === lit ? glowShadow(RGB.violet, 1, { blur: 18, alpha: 0.45 }) : '';
         row.num.style.color = on ? C.violet : C.slate;
         const p = backPop(t, 0.5 + i * 0.08);
-        place(row, ROWS.x, rowY(i), p.s, p.o);
+        const out = P(t, endAt + END.rows + i * END.rowStep, END.rowD, easeIn);
+        place(row, ROWS.x, rowY(i), p.s * (1 - out), p.o * (1 - out));
       });
 
-      // the UI, which cannot see them: a "?" that breathes
+      // the UI, which cannot see them: a "?" that breathes; at the ending, it travels and resizes into chapter 1's
+      // subscriber tile
       const up = backPop(t, 1.1);
-      place(s.ui, UI.x, 515, up.s, up.o);
-      s.q.style.opacity = 0.6 + 0.4 * Math.sin(G * 2.4) ** 2;
-      s.link.style.opacity = P(t, 1.3, 0.4);
+      const morph = end('tile', END.tileD);
+      s.ui.style.width = lerp(UI.w, SUB_TILE.w, morph) + 'px';
+      s.ui.style.height = lerp(UI.h, SUB_TILE.h, morph) + 'px';
+      place(s.ui, lerp(UI.x, SUB_TILE.x, morph), lerp(515, SUB_TILE.y, morph), up.s, up.o);
+      const qOut = end('q', END.qD, easeIn);
+      s.q.style.opacity = (0.6 + 0.4 * Math.sin(G * 2.4) ** 2) * (1 - qOut);
+      s.q.style.transform = `scale(${1 - 0.5 * qOut})`;
+      // the dashed line fades in, then pulls back towards the rows
+      drawDashed(s.link, 1 - end('link', END.linkD), P(t, 1.3, 0.4), 8, 10);
     }
   });
 }
